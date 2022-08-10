@@ -10,15 +10,9 @@ class AffairViewSet(ModelViewSet):
     serializer_class = AffairSerializer
     permission_classes = [IsSuperUserOrReadOnly]
     filter_fields = [
-        'farsi_name',
         'farsi_description',
-        'farsi_description2',
-        'english_name',
         'english_description',
-        'english_description2',
-        'arabic_name',
         'arabic_description',
-        'arabic_description2',
         'category',
         'category__farsi_name',
     ]
@@ -33,7 +27,7 @@ class AffairViewSet(ModelViewSet):
         'arabic_description',
         'arabic_description2',
     ]
-    ordering = ['-sort_id']
+    ordering = ['sort_id']
 
 
 class AffairCategoryViewSet(ModelViewSet):
@@ -41,4 +35,4 @@ class AffairCategoryViewSet(ModelViewSet):
     serializer_class = AffairCategorySerializer
     permission_classes = [IsSuperUserOrReadOnly]
     filter_fields = ['parent']
-    ordering = ['-sort_id']
+    ordering = ['sort_id']

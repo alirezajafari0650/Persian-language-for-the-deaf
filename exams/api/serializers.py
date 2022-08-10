@@ -13,8 +13,9 @@ class ExamSerializer(serializers.ModelSerializer):
         model = Exam
         fields = '__all__'
 
-    def get_options(self, obj):
-        options = random.choices(range(obj.start_word, obj.end_word + 1), k=4)
+    @staticmethod
+    def get_options(obj):
+        options = random.sample(range(obj.start_word, obj.end_word + 1), k=4)
         main_url = reverse_lazy('words-api:word-list')
         urls = ['http://localhost:8000' + main_url + str(option) for option in options]
         return urls

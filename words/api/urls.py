@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from words.api.api_views import WordViewSet, WordCategoryViewSet, LinkManagerViewSet, video_url
+from words.api.api_views import WordViewSet, WordCategoryViewSet, LinkManagerViewSet, video_url,test
 
 app_name = 'words-api'
 router = DefaultRouter()
@@ -11,4 +11,5 @@ urlpatterns = router.urls
 urlpatterns += [
     path('video/<token>/<lid>/', video_url, name='video_url'),
     path('link-managers/<int:wid>/', LinkManagerViewSet.as_view(), name='link-manager'),
+    path('test/',test)
 ]
