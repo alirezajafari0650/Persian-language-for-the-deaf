@@ -9,13 +9,7 @@ class AffairViewSet(ModelViewSet):
     queryset = Affair.objects.all()
     serializer_class = AffairSerializer
     permission_classes = [IsSuperUserOrReadOnly]
-    filter_fields = [
-        'farsi_description',
-        'english_description',
-        'arabic_description',
-        'category',
-        'category__farsi_name',
-    ]
+    filter_fields = ['category__farsi_name']
     search_fields = [
         'farsi_name',
         'farsi_description',

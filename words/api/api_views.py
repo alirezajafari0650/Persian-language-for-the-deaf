@@ -16,7 +16,7 @@ User = get_user_model()
 class WordViewSet(ModelViewSet):
     serializer_class = WordSerializer
     permission_classes = [IsSuperUserOrReadOnly]
-
+    filter_fields = ['category__farsi_name']
     search_fields = [
         'farsi_name',
         'farsi_description',
