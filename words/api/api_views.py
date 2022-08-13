@@ -40,11 +40,17 @@ class WordViewSet(ModelViewSet):
 
 
 class WordCategoryViewSet(ModelViewSet):
-    queryset = WordCategory.objects.all()
     serializer_class = WordCategorySerializer
     permission_classes = [IsSuperUserOrReadOnly]
-    filter_fields = ['parent']
+    filter_fields = ['parent__farsi_name']
     ordering = ['sort_id']
+
+    def get_queryset(self):
+        queryparams = self.request.query_params
+        parent__farsi_name = queryparams.get('parent__farsi_name')
+        if parent__farsi_name:
+            return WordCategory.objects.filter(parent__farsi_name=parent__farsi_name)
+        return WordCategory.objects.filter(parent__farsi_name=None)
 
 
 class LinkManagerViewSet(ListAPIView):
