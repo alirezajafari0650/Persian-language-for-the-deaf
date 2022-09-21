@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     'affairs.apps.AffairsConfig',
     'exams.apps.ExamsConfig',
     'kernel.apps.KernelConfig',
-    'sms_auth',
-    'kernel.providers.sms_provider',
+    'drf_sms_auth',
+    'drf_sms_auth.providers.sms0251'
 ]
 
 MIDDLEWARE = [
@@ -124,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'fa'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
@@ -142,7 +142,7 @@ MEDIA_URL = ''
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=150),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -176,15 +176,14 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100,
+    'PAGE_SIZE': 50,
 }
 
 SMS_AUTH_SETTINGS = {
     "SMS_CELERY_FILE_NAME": "asma_asam.run_celery",
     "SMS_AUTH_SUCCESS_KEY": "jwt_token",
-    "SMS_AUTH_PROVIDER_FROM": "10008663",
+    "SMS_AUTH_PROVIDER_FROM": "+985000125475",
     "SMS_AUTH_AUTH_TOKEN": config('SMS_AUTH_AUTH_TOKEN'),
-    "SMS_USER_SERIALIZER": 'kernel.api.serializers.TokenSerializer',
     "SMS_USER_FIELD": 'username',
 }
 

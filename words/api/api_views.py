@@ -2,15 +2,32 @@ from django.contrib.auth import get_user_model
 from django.http import FileResponse, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.mixins import DestroyModelMixin, ListModelMixin
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from asma_asam.permissions import IsSuperUserOrReadOnly
-from words.api.serializers import WordSerializer, WordCategorySerializer, LinkManagerSerializer
-from words.models import Word, WordCategory, LinkManager
+from words.api.serializers import WordSerializer, WordCategorySerializer, LinkManagerSerializer, NewWordSerializer
+from words.models import Word, WordCategory, LinkManager, NewWord
 
 User = get_user_model()
+
+
+class WordCategoryViewSet(ModelViewSet):
+    serializer_class = WordCategorySerializer
+    permission_classes = [IsSuperUserOrReadOnly]
+    filter_fields = ['parent__farsi_name']
+    ordering = ['sort_id']
+
+    def get_queryset(self):
+        queryparams = self.request.query_params
+        parent__farsi_name = queryparams.get('parent__farsi_name')
+        if parent__farsi_name:
+            return WordCategory.objects.filter(parent__farsi_name=parent__farsi_name)
+        return WordCategory.objects.filter(parent__farsi_name=None).exclude(farsi_name=None)
 
 
 class WordViewSet(ModelViewSet):
@@ -39,28 +56,40 @@ class WordViewSet(ModelViewSet):
         return Word.objects.all()
 
 
-class WordCategoryViewSet(ModelViewSet):
-    serializer_class = WordCategorySerializer
-    permission_classes = [IsSuperUserOrReadOnly]
-    filter_fields = ['parent__farsi_name']
-    ordering = ['sort_id']
+class NewWordView(ListModelMixin, DestroyModelMixin, GenericViewSet):
+    queryset = NewWord.objects.all()
+    serializer_class = NewWordSerializer
+    permission_classes = [AllowAny]
 
-    def get_queryset(self):
-        queryparams = self.request.query_params
-        parent__farsi_name = queryparams.get('parent__farsi_name')
-        if parent__farsi_name:
-            return WordCategory.objects.filter(parent__farsi_name=parent__farsi_name)
-        return WordCategory.objects.filter(parent__farsi_name=None)
+    @action(detail=False, methods=['POST'])
+    def create_or_update(self, request):
+        new_word = NewWord.objects.filter(name=request.data.get('name'))
+        data = {'name': request.data.get('name')}
+        if new_word.exists():
+            new_word = new_word.first()
+            print(new_word.user.all().values_list('id', flat=True))
+            data['user'] = list(new_word.user.all().values_list('id', flat=True)) + [request.user.id]
+            print(data)
+            serializer = self.get_serializer(new_word, data=data, partial=True)
+
+        else:
+            data['user'] = [request.user.id]
+            serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
-class LinkManagerViewSet(ListAPIView):
+class LinkManagerView(ListAPIView):
+    serializer_class = LinkManagerSerializer
+    permission_classes = [IsSuperUserOrReadOnly & IsAuthenticated]
     lookup_url_kwarg = 'wid'
 
     def get_queryset(self):
         link = LinkManager.objects.filter(
             user=self.request.user,
             word=self.kwargs.get('wid')
-        )
+        ).select_related('word')
 
         if len(link) == 0:
             link = LinkManager.objects.create(
@@ -72,20 +101,25 @@ class LinkManagerViewSet(ListAPIView):
             link = self.get_queryset()
         return link
 
-    serializer_class = LinkManagerSerializer
-    permission_classes = [IsSuperUserOrReadOnly & IsAuthenticated]
 
-
-def video_url(request, token, lid):
+def video_url(request, token, lid, video_number):
     lid = force_str(urlsafe_base64_decode(lid))
     link = LinkManager.objects.get(id=lid)
-    path = request.build_absolute_uri()
-    print(path, link.word.video.path)
-    if link.check_link(token, path):
-        response = FileResponse(open(link.word.video.path, 'rb'))
+    path = request.build_absolute_uri()[:-2]
+    video_number = str(video_number)
+    print(path, link.link)
+    if link.check_link(token, path, video_number):
+        video1 = link.word.video1
+        video2 = link.word.video2
+
+        if video_number == '1' and video1:
+            response = FileResponse(open(video1.path, 'rb'))
+        elif video_number == '2' and video2:
+            response = FileResponse(open(video2.path, 'rb'))
+        else:
+            response = HttpResponse(status=403)
     else:
         response = HttpResponse(status=403)
-    link.generate_link()
     return response
 
 

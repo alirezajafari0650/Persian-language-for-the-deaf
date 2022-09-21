@@ -3,8 +3,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
-from sms_auth.api.views import EntryAPIView, ChangePhoneNumberAPIView
-from kernel.api.api_view import AuthAPIView
+from drf_sms_auth.api.views import EntryAPIView, ChangePhoneNumberAPIView
+from drf_sms_auth.api.views import AuthAPIView
 from words.api.api_views import video_url
 
 urlpatterns = [

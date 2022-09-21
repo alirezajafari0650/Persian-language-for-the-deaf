@@ -6,6 +6,29 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 User = get_user_model()
 
 
+class EntrySerializer(serializers.Serializer):
+    phone_number = PhoneNumberField()
+
+
+class AuthSerializer(serializers.Serializer):
+    phone_number = PhoneNumberField()
+    code = serializers.IntegerField()
+
+
+class ChangePhoneNumberSerializer(serializers.Serializer):
+    new_phone_number = PhoneNumberField()
+
+
+class DefaultUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'pk',
+            'first_name',
+            'last_name'
+        ]
+
+
 class TokenSerializer(serializers.ModelSerializer):
     refresh = serializers.SerializerMethodField(read_only=True)
     access = serializers.SerializerMethodField(read_only=True)

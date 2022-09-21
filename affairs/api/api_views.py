@@ -36,4 +36,4 @@ class AffairCategoryViewSet(ModelViewSet):
         parent__farsi_name = queryparams.get('parent__farsi_name')
         if parent__farsi_name:
             return AffairCategory.objects.filter(parent__farsi_name=parent__farsi_name)
-        return AffairCategory.objects.filter(parent__farsi_name=None)
+        return AffairCategory.objects.filter(parent__farsi_name=None).exclude(farsi_name=None)
