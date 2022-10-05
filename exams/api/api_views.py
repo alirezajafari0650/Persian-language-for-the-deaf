@@ -1,7 +1,7 @@
 import random
 
 from rest_framework.viewsets import ModelViewSet
-
+from asma_asam.permissions import IsProfetionalUser
 from exams.api.serializers import ExamSerializer
 from exams.models import Exam
 
@@ -19,3 +19,4 @@ class ExamViewSet(ModelViewSet):
         return get_exam(last_id)
 
     serializer_class = ExamSerializer
+    permission_classes = [IsProfetionalUser]
