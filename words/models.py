@@ -53,7 +53,7 @@ class NewWord(models.Model):
 
 
 class LinkManager(models.Model):
-    word = models.ForeignKey(Word, on_delete=models.CASCADE)
+    word = models.ForeignKey(Word, on_delete=models.CASCADE,related_name='video_link')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.URLField(blank=True)
     used_for = models.CharField(max_length=5, default='')
@@ -61,27 +61,20 @@ class LinkManager(models.Model):
     def generate_link(self):
         lid = urlsafe_base64_encode(force_bytes(self.id))
         token = default_token_generator.make_token(self.user)
-        domain = 'http://127.0.0.1:8000/word-api'
+        domain = 'http://127.0.0.1:8080/word-api'
         self.link = "%s/video/%s/%s/" % (domain, token, lid)
         self.used_for = ''
         self.save()
         return self.link
 
     def check_link(self, token, path, video_number):
-
-        print(video_number not in self.used_for)
-        print(default_token_generator.check_token(self.user, token))
-        print(self.link == path)
-        print(self.user.is_authenticated)
-        print(self.user.is_profetional)
         response = bool(
             video_number not in self.used_for and
             default_token_generator.check_token(self.user, token) and
             self.link == path and
             self.user.is_authenticated and
-            self.user.is_profetional
+            self.user.is_professional
         )
-        print(response)
         if response:
             self.used_for = self.used_for + '_' + video_number
             self.save()
@@ -91,3 +84,11 @@ class LinkManager(models.Model):
 
     def __str__(self):
         return str(self.user.username) + ' - ' + self.word.farsi_name
+
+
+class Exam(models.Model):
+    start_word = models.IntegerField()
+    end_word = models.IntegerField()
+
+    def __str__(self):
+        return str(self.start_word) + "-" + str(self.end_word)

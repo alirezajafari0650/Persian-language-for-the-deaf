@@ -3,7 +3,6 @@ import random
 from rest_framework import serializers
 
 from exams.models import Exam
-from words.api.serializers import LinkManagerSerializer
 from words.models import LinkManager, Word
 
 
@@ -33,8 +32,8 @@ class ExamSerializer(serializers.ModelSerializer):
             else:
                 link = link.first()
             data.append(link)
-        return LinkManagerSerializer(data, many=True, context=self.context).data
-
+        # return LinkManagerSerializer(data, many=True, context=self.context).data
+        return data
     def get_options(self, obj, options=None):
         if options is None:
             options = random.sample(range(obj.start_word, obj.end_word + 1), k=4)

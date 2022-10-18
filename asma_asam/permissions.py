@@ -11,13 +11,13 @@ class IsSuperUserOrReadOnly(BasePermission):
         )
 
 
-class IsProfetionalUser(BasePermission):
+class IsProfessionalUser(BasePermission):
     def has_permission(self, request, view):
         return bool(
             request.method in SAFE_METHODS and
             request.user and
             request.user.is_authenticated and
-            request.user.is_profetional or
+            request.user.is_professional or
             request.user.is_superuser
         )
 

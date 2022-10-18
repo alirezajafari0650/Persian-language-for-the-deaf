@@ -5,7 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class CustomUser(AbstractUser):
     username = PhoneNumberField(unique=True)
-    is_profetional = models.BooleanField(default=False)
+    is_professional = models.BooleanField(default=False)
 
     def __str__(self):
         string = self.first_name + ' ' + self.last_name

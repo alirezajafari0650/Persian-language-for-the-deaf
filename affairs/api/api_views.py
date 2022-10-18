@@ -14,12 +14,6 @@ class AffairViewSet(ModelViewSet):
         'farsi_name',
         'farsi_description',
         'farsi_description2',
-        'english_name',
-        'english_description',
-        'english_description2',
-        'arabic_name',
-        'arabic_description',
-        'arabic_description2',
     ]
     ordering = ['sort_id']
 
@@ -30,6 +24,7 @@ class AffairCategoryViewSet(ModelViewSet):
     permission_classes = [IsSuperUserOrReadOnly]
     filter_fields = ['parent__farsi_name']
     ordering = ['sort_id']
+    search_fields = ['@farsi_name']
 
     def get_queryset(self):
         queryparams = self.request.query_params
