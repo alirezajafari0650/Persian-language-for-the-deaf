@@ -50,10 +50,11 @@ class NewWord(models.Model):
 
     class Meta:
         verbose_name = 'کلمه جدید'
+        verbose_name_plural = 'کلمات جدید'
 
 
 class LinkManager(models.Model):
-    word = models.ForeignKey(Word, on_delete=models.CASCADE,related_name='video_link')
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='video_link')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.URLField(blank=True)
     used_for = models.CharField(max_length=5, default='')

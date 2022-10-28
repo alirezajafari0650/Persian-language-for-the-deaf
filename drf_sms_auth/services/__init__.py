@@ -1,3 +1,3 @@
 from .auth import AuthService
-from .generator import GeneratorService
 from .clean import CleanService
+from .generator import GeneratorService

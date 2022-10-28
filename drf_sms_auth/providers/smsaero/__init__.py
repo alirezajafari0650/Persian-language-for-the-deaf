@@ -1,8 +1,8 @@
-import requests
-import json
-import re
 import hashlib
+import json
 from urllib.parse import urljoin
+
+import requests
 
 from ..base import SMSProvider
 
@@ -40,11 +40,11 @@ class Smsaero(SMSProvider):
         return json.loads(response.text)
 
     def send_sms(self):
-        phone_number = str(self.to).replace( ' ', '' ) \
-            .replace( '-', '' ) \
-            .replace( '+', '' ) \
-            .replace( '(', '' ) \
-            .replace( ')', '' )
+        phone_number = str(self.to).replace(' ', '') \
+            .replace('-', '') \
+            .replace('+', '') \
+            .replace('(', '') \
+            .replace(')', '')
 
         data = {
             'to': phone_number,

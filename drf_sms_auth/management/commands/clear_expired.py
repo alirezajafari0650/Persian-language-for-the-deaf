@@ -6,6 +6,3 @@ from ...services import CleanService
 class Command(BaseCommand):
     def handle(self, *args, **options):
         CleanService.clear()
-
-
-

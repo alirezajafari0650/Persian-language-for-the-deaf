@@ -25,12 +25,12 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+APPEND_SLASH = True
 ALLOWED_HOSTS = ['*']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    ]
+]
 
 # Application definition
 
@@ -45,12 +45,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'debug_toolbar',
+    'azbankgateways',
     'corsheaders',
     'phonenumber_field',
     'django_filters',
     'words.apps.WordsConfig',
     'affairs.apps.AffairsConfig',
-    'exams.apps.ExamsConfig',
     'kernel.apps.KernelConfig',
     'drf_sms_auth',
     'drf_sms_auth.providers.sms0251'
@@ -148,8 +148,8 @@ MEDIA_URL = ''
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=150),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=150),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
@@ -181,6 +181,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'drf_excel.renderers.XLSXRenderer',
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 50,
 }
@@ -198,3 +203,19 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+AZ_IRANIAN_BANK_GATEWAYS = {
+    'GATEWAYS': {
+        'ZARINPAL': {
+            'MERCHANT_CODE': config('MERCHANT_CODE'),
+            'SANDBOX': True,
+        }
+    },
+    'IS_SAMPLE_FORM_ENABLE': True,
+    'DEFAULT': 'ZARINPAL',
+    'CURRENCY': 'IRR',
+    'TRACKING_CODE_QUERY_PARAM': 'tc',
+    'TRACKING_CODE_LENGTH': 16,
+    'SETTING_VALUE_READER_CLASS': 'azbankgateways.readers.DefaultReader',
+    'BANK_PRIORITIES': [],
+}

@@ -3,7 +3,7 @@ from django.utils.module_loading import import_string
 from rest_framework import generics, permissions
 
 from .mixins import ResponsesMixin
-from .serializers import AuthSerializer, EntrySerializer, ChangePhoneNumberSerializer, DefaultUserSerializer,TokenSerializer
+from .serializers import AuthSerializer, EntrySerializer, ChangePhoneNumberSerializer, TokenSerializer
 from ..conf import conf
 from ..services import AuthService, GeneratorService
 

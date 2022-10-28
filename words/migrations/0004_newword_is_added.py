@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('words', '0003_alter_newword_options_remove_newword_count_and_more'),
     ]

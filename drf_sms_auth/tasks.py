@@ -1,8 +1,7 @@
-import importlib
-
 from asma_asam.run_celery import app as app_app
 from .conf import conf
 from .models import PhoneCode
+
 
 # celery_conf = importlib.import_module(conf.SMS_CELERY_FILE_NAME)
 # app = getattr(celery_conf, "app")

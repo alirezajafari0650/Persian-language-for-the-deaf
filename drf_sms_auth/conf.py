@@ -1,8 +1,6 @@
 import importlib
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
-
 
 SMS_AUTH_SETTINGS = getattr(settings, "SMS_AUTH_SETTINGS", {})
 

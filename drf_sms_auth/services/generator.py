@@ -3,10 +3,9 @@ from django.contrib.auth import get_user_model
 from ..api.exceptions import \
     SMSWaitException, \
     UserAlreadyExistException
-
+from ..conf import conf
 from ..models import PhoneCode
 from ..utils import SmsService
-from ..conf import conf
 
 
 class GeneratorService(SmsService):
@@ -16,12 +15,12 @@ class GeneratorService(SmsService):
 
     def process(self):
         if self.owner is not None:
-            code = PhoneCode.objects\
-                .filter(owner=self.owner)\
+            code = PhoneCode.objects \
+                .filter(owner=self.owner) \
                 .first()
         else:
-            code = PhoneCode.objects\
-                .filter(phone_number=self.phone_number)\
+            code = PhoneCode.objects \
+                .filter(phone_number=self.phone_number) \
                 .first()
 
         if code is not None:
@@ -35,6 +34,6 @@ class GeneratorService(SmsService):
             if get_user_model().objects.filter(**kwargs).exists():
                 raise UserAlreadyExistException()
 
-        PhoneCode.objects\
+        PhoneCode.objects \
             .create(phone_number=self.phone_number,
                     owner=self.owner)

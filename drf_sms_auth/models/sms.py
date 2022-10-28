@@ -1,7 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth import get_user_model
-
 from phonenumber_field.modelfields import PhoneNumberField
 
 from ..utils import random_code, valid_to
