@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from asma_asam.permissions import IsSuperUserOrReadOnly, IsSuperUser
+from asma_asam.permissions import IsSuperUserOrReadOnly, IsSuperUser, IsProfessionalUser
 from words.api.serializers import WordSerializer, WordCategorySerializer, NewWordSerializer
 from words.models import Word, WordCategory, LinkManager, NewWord, Exam
 
@@ -33,11 +33,11 @@ def get_link(user, word_id):
         video2 = link + '2/'
     else:
         video2 = None
-    return [{
+    return {
         'link': link,
         'video1': video1,
         'video2': video2
-    }]
+    }
 
 
 class WordCategoryViewSet(ModelViewSet):
@@ -63,13 +63,28 @@ class WordViewSet(ModelViewSet):
     search_fields = ['farsi_name', 'farsi_description', 'farsi_description2']
     ordering = ['sort_id']
 
+    @action(detail=False, methods=['GET'], permission_classes=[IsProfessionalUser])
+    def make_sentence(self, request):
+        words_id = request.query_params.get('words_id')
+        data = {}
+        if words_id:
+            words_id = words_id.split(',')
+            video_link = []
+            for word_id in words_id:
+                link = LinkManager.objects.filter(user=request.user, word_id=word_id).first()
+                if link:
+                    link = link.link + '1/'
+                else:
+                    link=get_link(request.user, word_id)['video1']
+                video_link.append(link)
+            data['words_video_link'] = video_link
+
+        return Response(data)
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        if self.request.query_params.get('search', None):
-            context['fields'] = ['id', 'farsi_name', 'video_link']
-        elif self.action == 'list':
+        if self.action == 'list':
             context['fields'] = ['id', 'farsi_name']
-
         return context
 
     def retrieve(self, request, *args, **kwargs):
