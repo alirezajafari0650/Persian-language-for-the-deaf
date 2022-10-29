@@ -69,16 +69,19 @@ class WordViewSet(ModelViewSet):
         data = {}
         if words_id:
             words_id = words_id.split(',')
-            video_link = []
-            for word_id in words_id:
-                link = LinkManager.objects.filter(user=request.user, word_id=word_id).first()
-                if link:
-                    link = link.link + '1/'
-                else:
-                    link=get_link(request.user, word_id)['video1']
-                video_link.append(link)
-            data['words_video_link'] = video_link
-
+            video_link = LinkManager.objects.filter(user=request.user, word__id__in=words_id).values_list('link', flat=True)
+            if len(video_link) == len(words_id):
+                data['words_video_link'] = [link + '1/' for link in video_link]
+            else :
+                video_link = []
+                for word_id in words_id:
+                    link = LinkManager.objects.filter(user=request.user, word_id=word_id).first()
+                    if link:
+                        link = link.link + '1/'
+                    else:
+                        link = get_link(request.user, word_id)['video1']
+                    video_link.append(link)
+                data['words_video_link'] = video_link
         return Response(data)
 
     def get_serializer_context(self):
