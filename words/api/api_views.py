@@ -45,7 +45,7 @@ class WordCategoryViewSet(ModelViewSet):
     permission_classes = [IsSuperUserOrReadOnly]
     filter_fields = ['parent__farsi_name']
     ordering = ['sort_id']
-    search_fields = ['@farsi_name']
+    search_fields = ['farsi_name']
 
     def get_queryset(self):
         queryparams = self.request.query_params
