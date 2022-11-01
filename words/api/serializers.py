@@ -1,9 +1,12 @@
+from django.contrib.auth import get_user_model
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from rest_framework import serializers
 
 from asma_asam.dynamic_fields import DynamicFieldsMixin
 from asma_asam.permissions import IsProfessionalUser
 from words.models import Word, WordCategory, LinkManager, NewWord
+
+User = get_user_model()
 
 
 class WordCategorySerializer(serializers.ModelSerializer):
@@ -63,12 +66,21 @@ class WordSerializer(DynamicFieldsMixin, WritableNestedModelSerializer):
                 return LinkManagerSerializer(obj, context=self.context).data
 
 
+class NewWordUserSerializer(serializers.ModelSerializer):
+    full_name = serializers.StringRelatedField(source='get_full_name')
+
+    class Meta:
+        model = User
+        fields = ['id', 'full_name', 'username']
+
+
 class NewWordSerializer(serializers.ModelSerializer):
     count = serializers.SerializerMethodField(read_only=True)
+    user = NewWordUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = NewWord
-        fields = ['id', 'name', 'user', 'count', 'is_added']
+        fields = ['id', 'name', 'user', 'count', 'is_added', 'date']
 
     @staticmethod
     def get_count(obj):

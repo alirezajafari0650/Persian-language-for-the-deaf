@@ -1,12 +1,12 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from kernel.api.api_views import BankGateway, FactureViewSet, AdViewSet, SearchView, LikeViewSet,CustomUserViewSet
+from kernel.api.api_views import BankGateway, FactureViewSet, AdsViewSet, SearchView, LikeViewSet,CustomUserViewSet
 
 app_name = 'kernel-api'
 router = DefaultRouter()
 router.register('factures', FactureViewSet, basename='factures')
-router.register('ads', AdViewSet, basename='ads')
+router.register('ads', AdsViewSet, basename='ads')
 router.register('likes', LikeViewSet, basename='likes')
 router.register('users', CustomUserViewSet, basename='users')
 urlpatterns = [

@@ -5,11 +5,12 @@ from azbankgateways.exceptions import AZBankGatewaysException
 from django.http import Http404
 from django.urls import reverse
 from drf_excel.mixins import XLSXFileMixin
+from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
 
 from affairs.api.api_views import AffairViewSet
 from asma_asam.permissions import IsSuperUser, IsSuperUserOrReadOnly
@@ -69,7 +70,7 @@ class FactureViewSet(XLSXFileMixin, ReadOnlyModelViewSet):
     filename = 'گزارش_مالی.xlsx'
 
 
-class AdViewSet(ModelViewSet):
+class AdsViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     permission_classes = [IsSuperUserOrReadOnly]
     queryset = Ad.objects.all()
     serializer_class = AdSerializer

@@ -8,5 +8,4 @@ urlpatterns = [
     path('auth/', AuthAPIView.as_view()),
     path('change-phonenumber/', ChangePhoneNumberAPIView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
-    path('verify/', TokenVerifyView.as_view()),
 ]

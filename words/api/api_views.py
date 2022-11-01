@@ -1,6 +1,7 @@
 import random
 
 from django.contrib.auth import get_user_model
+from django.db.models import Count
 from django.http import FileResponse, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -69,10 +70,11 @@ class WordViewSet(ModelViewSet):
         data = {}
         if words_id:
             words_id = words_id.split(',')
-            video_link = LinkManager.objects.filter(user=request.user, word__id__in=words_id).values_list('link', flat=True)
+            video_link = LinkManager.objects.filter(user=request.user, word__id__in=words_id).values_list('link',
+                                                                                                          flat=True)
             if len(video_link) == len(words_id):
                 data['words_video_link'] = [link + '1/' for link in video_link]
-            else :
+            else:
                 video_link = []
                 for word_id in words_id:
                     link = LinkManager.objects.filter(user=request.user, word_id=word_id).first()
@@ -119,9 +121,19 @@ class WordViewSet(ModelViewSet):
 
 
 class NewWordView(ModelViewSet):
-    queryset = NewWord.objects.all()
     serializer_class = NewWordSerializer
     permission_classes = [IsSuperUser]
+    filter_fields = ['is_added']
+    ordering_fields = ['date']
+
+    def get_queryset(self):
+        quryparms = self.request.query_params
+        ordering = quryparms.get('ordering')
+        if ordering and 'count' in ordering:
+            queryset = NewWord.objects.annotate(count=Count('user')).order_by(ordering)
+        else:
+            queryset = NewWord.objects.all()
+        return queryset.prefetch_related('user')
 
     @action(detail=False, methods=['POST'], permission_classes=[AllowAny])
     def create_or_update(self, request):
@@ -139,7 +151,7 @@ class NewWordView(ModelViewSet):
             serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response({'message': 'درخواست شما با موفقیت ثبت شد'})
 
 
 class ExamViewSet(ModelViewSet):
