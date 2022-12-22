@@ -49,11 +49,13 @@ class WordCategoryViewSet(ModelViewSet):
     search_fields = ['farsi_name']
 
     def get_queryset(self):
-        queryparams = self.request.query_params
-        parent__farsi_name = queryparams.get('parent__farsi_name')
-        if parent__farsi_name:
-            return WordCategory.objects.filter(parent__farsi_name=parent__farsi_name)
-        return WordCategory.objects.filter(parent__farsi_name=None).exclude(farsi_name=None)
+        if self.action == 'list':
+            queryparams = self.request.query_params
+            parent__farsi_name = queryparams.get('parent__farsi_name')
+            if parent__farsi_name:
+                return WordCategory.objects.filter(parent__farsi_name=parent__farsi_name)
+            return WordCategory.objects.filter(parent__farsi_name=None).exclude(farsi_name=None)
+        return WordCategory.objects.all()
 
 
 class WordViewSet(ModelViewSet):
