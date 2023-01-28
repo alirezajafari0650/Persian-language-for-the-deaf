@@ -132,3 +132,22 @@ class CustomUserViewSet(ReadOnlyModelViewSet):
         user.is_superuser = is_superuser
         user.save()
         return Response({'message': 'عملیات با موفقیت انجام شد.'})
+
+    @action(detail=False, methods=['GET', 'PUT', 'PATCH'],permission_classes=[IsAuthenticated])
+    def me(self, request):
+        if request.method == 'GET':
+            serializer = CustomUserSerializer(request.user)
+            return Response(serializer.data)
+        ##when user update his profile is professional and superuser and is_active not change
+        is_professional = request.user.is_professional
+        is_superuser = request.user.is_superuser
+        is_active = request.user.is_active
+        serializer = CustomUserSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        request.user.is_professional = is_professional
+        request.user.is_superuser = is_superuser
+        request.user.is_active = is_active
+        request.user.save()
+        return Response(serializer.data)
+

@@ -15,4 +15,4 @@ urlpatterns = [
                   path('auth/', include('drf_sms_auth.api.urls')),
                   path('bankgateways/', az_bank_gateways_urls()),
                   path('__debug__/', include('debug_toolbar.urls')),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

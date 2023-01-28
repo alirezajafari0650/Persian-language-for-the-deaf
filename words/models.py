@@ -3,7 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db import models
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-
+from django.conf import settings
 User = get_user_model()
 
 
@@ -62,7 +62,7 @@ class LinkManager(models.Model):
     def generate_link(self):
         lid = urlsafe_base64_encode(force_bytes(self.id))
         token = default_token_generator.make_token(self.user)
-        domain = 'http://127.0.0.1:8080/word-api'
+        domain = settings.DOMAIN + '/word-api'
         self.link = "%s/video/%s/%s/" % (domain, token, lid)
         self.used_for = ''
         self.save()

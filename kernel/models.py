@@ -77,6 +77,7 @@ class UserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    profile_picture = models.ImageField(upload_to="media/profile_pictures", blank=True)
     username = PhoneNumberField(unique=True)
     is_active = models.BooleanField(default=True)
     is_professional = models.BooleanField(default=False)

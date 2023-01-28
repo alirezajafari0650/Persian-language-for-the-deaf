@@ -144,6 +144,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_ROOT = BASE_DIR
 MEDIA_URL = ''
+DOMAIN = 'http://127.0.0.1:8080'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

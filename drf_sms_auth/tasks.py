@@ -1,4 +1,4 @@
-from asma_asam.run_celery import app as app_app
+#from asma_asam.run_celery import app as app_app
 from .conf import conf
 from .models import PhoneCode
 
@@ -13,10 +13,10 @@ def get_provider_class():
     return provider
 
 
-app = app_app
+#app = app_app
 
 
-@app.task
+# @app.task
 def send_sms_async(identifier: int):
     code_instance = PhoneCode.objects.filter(pk=identifier).first()
     if code_instance:
